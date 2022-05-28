@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -16,6 +17,20 @@ async function run() {
         await client.connect();
         const productsCollection = client.db('pats_world').collection('products');
         const orderCollection = client.db('pats_world').collection('orders');
+        const userCollection = client.db('pats_world').collection('users');
+
+        //AUTH
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
 
         app.get('/products', async (req, res) => {
             const query = {};
