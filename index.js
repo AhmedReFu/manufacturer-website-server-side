@@ -87,12 +87,26 @@ async function run() {
             const products = await cursor.toArray();
             res.send(products)
         });
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result);
+
+        });
+
+
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const product = await productsCollection.findOne(query);
             res.send(product);
         })
+        app.delete('/products/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
+            res.send(result);
+        });
 
         app.post('/order', verifyJWT, async (req, res) => {
             const order = req.body;
@@ -139,6 +153,14 @@ async function run() {
             const cursor = reviewCollection.find(query);
             const products = await cursor.toArray();
             res.send(products)
+        })
+
+        app.get('/allorder', verifyJWT, async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products)
+
         })
     }
     finally {
