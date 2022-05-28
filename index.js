@@ -18,6 +18,7 @@ async function run() {
         const productsCollection = client.db('pats_world').collection('products');
         const orderCollection = client.db('pats_world').collection('orders');
         const userCollection = client.db('pats_world').collection('users');
+        const reviewCollection = client.db('pats_world').collection('review');
 
         //AUTH
         app.put('/user/:email', async (req, res) => {
@@ -59,15 +60,20 @@ async function run() {
             const products = await cursor.toArray();
             res.send(products)
         })
-        app.get('/order', async (req, res) => {
 
-        })
         app.delete('/order/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.send(result);
         });
+
+        app.post('/addreview', async (req, res) => {
+            const order = req.body;
+            const result = await reviewCollection.insertOne(order);
+            res.send(result);
+        })
+
     }
     finally {
 
