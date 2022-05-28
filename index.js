@@ -36,6 +36,8 @@ async function run() {
 
         app.get('/products', async (req, res) => {
             const query = {};
+            const authorization = req.headers.authorization
+            console.log('authorization', authorization)
             const cursor = productsCollection.find(query);
             const products = await cursor.toArray();
             res.send(products)
@@ -49,6 +51,7 @@ async function run() {
 
         app.post('/order', async (req, res) => {
             const order = req.body;
+            const authorization = req.headers.authorization
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
@@ -74,6 +77,12 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products)
+        })
     }
     finally {
 
